@@ -1,23 +1,18 @@
 <template>
   <div class="app">
-    <form @submit.prevent> <!-- чтобы не было перезагрузки мы откл. действия по умолчанию -->
-      <h4>Создание поста</h4>
-      <!-- при помощи зарегитриваного слова $event мы обошлись без функции  -->
-      <input v-bind:value="title" v-on:input="title = $event.target.value" class="input" type="text"
-        placeholder="Название">
-      <input v-bind:value="body" @input="inputBody" class="input" type="text" placeholder="Описание">
-      <button class="btn" @click="createPost">Создать</button>
-    </form>
-
-    <div class="post" v-for="post in posts">
-      <div><strong>Название: </strong>{{ post.title }}</div>
-      <div><strong>Описание: </strong>{{ post.body }}</div>
-    </div>
+    <post-form /> <!-- post-form - автоматически из PostForm -->
+    <post-list :posts="posts" /> <!-- 'v-bind:' -> ':' -->
   </div>
 </template>
 
 <script>
+import PostForm from "@/components/PostForm"  // "@" это элиас - папка 'src'
+import PostList from "@/components/PostList"
+
 export default {
+  components: {
+    PostForm, PostList
+  },
   data() {
     return {
       posts: [
@@ -32,8 +27,6 @@ export default {
 
   methods: {
     createPost(event) {
-      //event.stopPropagation()
-      //event.preventDefault()
       const newPost = {
         id: Date.now(), // id из текущей даты
         title: this.title, // получаем из модели
@@ -48,7 +41,6 @@ export default {
     inputBody(event) {
       this.body = event.target.value;
     },
-
   }
 }
 </script>
@@ -63,32 +55,5 @@ export default {
 
 .app {
   padding: 20px;
-}
-
-.post {
-  padding: 15px;
-  border: 2px solid teal;
-  margin-top: 15px;
-}
-
-form {
-  display: flex;
-  flex-direction: column;
-}
-
-.input {
-  width: 100%;
-  border: 1px solid teal;
-  padding: 10px 15px;
-  margin-top: 15px;
-}
-
-.btn {
-  align-self: flex-end;
-  margin-top: 15px;
-  padding: 10px 15px;
-  background: none;
-  color: teal;
-  border: 1px solid teal;
 }
 </style>
