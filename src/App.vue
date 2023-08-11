@@ -1,10 +1,12 @@
 <template>
   <div class="app">
-    <form action="">
+    <form @submit.prevent> <!-- чтобы не было перезагрузки мы откл. действия по умолчанию -->
       <h4>Создание поста</h4>
-      <input class="input" type="text" placeholder="Название">
-      <input class="input" type="text" placeholder="Описание">
-      <button class="btn">Создать</button>
+      <!-- при помощи зарегитриваного слова $event мы обошлись без функции  -->
+      <input v-bind:value="title" v-on:input="title = $event.target.value" class="input" type="text"
+        placeholder="Название">
+      <input v-bind:value="body" @input="inputBody" class="input" type="text" placeholder="Описание">
+      <button class="btn" @click="createPost">Создать</button>
     </form>
 
     <div class="post" v-for="post in posts">
@@ -22,11 +24,31 @@ export default {
         { id: 1, title: 'JavaScript 1', body: 'Описание поста 1' },
         { id: 2, title: 'JavaScript 2', body: 'Описание поста 2' },
         { id: 3, title: 'JavaScript 3', body: 'Описание поста 3' },
-      ]
+      ],
+      title: '',
+      body: ''
     }
   },
 
   methods: {
+    createPost(event) {
+      //event.stopPropagation()
+      //event.preventDefault()
+      const newPost = {
+        id: Date.now(), // id из текущей даты
+        title: this.title, // получаем из модели
+        body: this.body,
+      }
+      this.posts.push(newPost); // добавляем к массиву posts
+      this.title = this.body = '';
+    },
+    /*inputTitle(event) { // при помощи зарегистрированого слова $event
+      this.title = event.target.value;
+    },*/
+    inputBody(event) {
+      this.body = event.target.value;
+    },
+
   }
 }
 </script>
@@ -64,7 +86,7 @@ form {
 .btn {
   align-self: flex-end;
   margin-top: 15px;
-  padding: 10px, 15px;
+  padding: 10px 15px;
   background: none;
   color: teal;
   border: 1px solid teal;
