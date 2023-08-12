@@ -1,11 +1,23 @@
 <template>
   <form @submit.prevent> <!-- чтобы не было перезагрузки мы откл. действия по умолчанию -->
     <h4>Создание поста</h4>
-    <!-- при помощи зарегитриваного слова $event мы обошлись без функции  -->
-    <input :value="post.title" @input="post.title = $event.target.value" class="input" type="text" placeholder="Название">
-    <input v-bind:value="post.body" v-on:input="post.body = $event.target.value" class="input" type="text"
-      placeholder="Описание">
-    <button class="btn" @click="createPost">Создать</button>
+    <!-- при помощи зарегитриваного слова $event мы обошлись без функции   -->
+    <input
+      v-model="post.title"
+      class="input"
+      type="text"
+      placeholder="Название"
+    >
+    <input
+      v-model="post.body"
+      class="input"
+      type="text"
+      placeholder="Описание"
+    >
+    <button
+      class="btn"
+      @click="createPost"
+    >Создать</button>
   </form>
 </template>
 
@@ -14,6 +26,19 @@ export default {
   data() {
     return {
       post: {
+        id: null, // BBR
+        title: '',
+        body: ''
+      }
+    }
+  },
+  methods: {
+    createPost(event) { // новый пост создавать не надо, он уже есть, нет id
+      this.post.id = Date.now(); // BBR: было this.post.id = Date.now()
+      //this.posts.push(newPost); // добавляем к массиву posts, не подходит - мы в дочернем компоненте
+      this.$emit('create', this.post); // 1-имя события, 2,3,...-то, что хотим передать
+      this.post = { // после передачи - очищаем
+        id: null, // BBR
         title: '',
         body: ''
       }
