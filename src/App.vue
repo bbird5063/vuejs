@@ -6,8 +6,8 @@
 </template>
 
 <script>
-import PostForm from "@/components/PostForm"  // "@" это элиас - папка 'src'
-import PostList from "@/components/PostList"
+import PostForm from "@/components/PostForm";  // "@" это элиас - папка 'src'
+import PostList from "@/components/PostList";
 
 export default {
   components: {
