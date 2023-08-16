@@ -1,13 +1,15 @@
 <template>
   <div class="app">
-    <!-- Закрывающий слеш обязятелен даже для инпутов -->
-    <post-form @create="createPost" /> <!-- наше событие create и функция "createPost", которая запустится -->
-    <post-list :posts="posts" /><!-- 'v-bind:' -> ':' -->
+    <post-form @create="createPost" />
+    <post-list
+      :posts="posts"
+      @remove="removePost"
+    />
   </div>
 </template>
 
 <script>
-import PostForm from "@/components/PostForm";  // "@" это элиас - папка 'src'
+import PostForm from "@/components/PostForm";
 import PostList from "@/components/PostList";
 
 export default {
@@ -27,14 +29,17 @@ export default {
   methods: {
     createPost(post) {
       this.posts.push(post);
+    },
+    removePost(post) {
+      this.posts = this.posts.filter(p => p.id !== post.id); // filter создает новый массив
     }
-  }
+  },
+
 }
 </script>
 
 <style>
 * {
-  /* полное обнуление отступов */
   margin: 0;
   padding: 0;
   box-sizing: border-box;
