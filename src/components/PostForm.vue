@@ -5,7 +5,7 @@
       v-model="post.title"
       type="text"
       placeholder="Название"
-    />
+    /> <!-- обязательно закрывать тег "/>" -->
     <my-input
       v-model="post.body"
       type="text"
