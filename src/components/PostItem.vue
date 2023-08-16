@@ -1,10 +1,12 @@
 <template>
   <div class="post">
     <div>
+      <!-- post получили сверху через пропс от родителя PostList -->
       <div><strong>Название: </strong>{{ post.title }}</div>
       <div><strong>Описание: </strong>{{ post.body }}</div>
     </div>
     <div class="post__btns">
+      <!-- при помощки $emit отправляем наверх post для удаление в родитель PostList(в наш <post-item>), который получили родителя PostList через пропс. Т.е. начинаем цепочку (App <- PostList <- "PostItem") передач родителям -->
       <my-button @click="$emit('remove', post)">Удалить</my-button>
     </div>
   </div>
@@ -13,7 +15,7 @@
 <script>
 export default {
   props: {
-    post: {
+    post: { // пропс post пришел от родителя PostList
       type: Object,
       required: true,
     }

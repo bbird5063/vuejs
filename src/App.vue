@@ -1,6 +1,8 @@
 <template>
   <div class="app">
     <post-form @create="createPost" />
+
+    <!-- post для удаление(2 аргумент $emit) получили снизу при помощи $emit от дочернего PostList. Закончили цепочку ("App" <- PostList <- PostItem) передач родителям и вызвали функцию удаления "removePost".  -->
     <post-list
       :posts="posts"
       @remove="removePost"
