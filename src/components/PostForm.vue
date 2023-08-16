@@ -1,12 +1,11 @@
 <template>
-  <form @submit.prevent> <!-- чтобы не было перезагрузки мы откл. действия по умолчанию -->
+  <form @submit.prevent>
     <h4>Создание поста</h4>
-    <!-- при помощи зарегитриваного слова $event мы обошлись без функции   -->
     <my-input
       v-model="post.title"
       type="text"
       placeholder="Название"
-    /> <!-- обязательно закрывать тег "/>" -->
+    />
     <my-input
       v-model="post.body"
       type="text"
