@@ -1,7 +1,7 @@
 <template>
   <div class="app">
     <h1>Страница с постами</h1>
-    <my-button @click="fetchPost">Получить посты</my-button>
+    <!--my-button @click="fetchPost">Получить посты</my-button-->
     <my-button
       @click="showDialog"
       style="margin: 15px 0;"
@@ -46,7 +46,9 @@ export default {
     },
     showDialog() {
       this.dialodVisible = true;
-    }, async fetchPost() {
+    },
+
+    async fetchPost() {
       try {
         const response = await axios.get('https://jsonplaceholder.typicode.com/posts?_limit=10');
         this.posts = response.data;
@@ -55,6 +57,10 @@ export default {
       }
     }
   },
+
+  mounted() {
+    this.fetchPost()
+  }
 }
 </script>
 
@@ -69,4 +75,3 @@ export default {
   padding: 20px;
 }
 </style>
-
