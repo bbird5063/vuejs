@@ -1,21 +1,23 @@
 <template>
   <div class="app">
     <h1>Страница с постами</h1>
-    <my-button
-      @click="showDialog"
-      style="margin: 15px 0;"
-    >
-      Создать пользователя
-    </my-button>
+    <div class="app_btns">
+      <my-button @click="showDialog">
+        Создать пост
+      </my-button>
+      <!-- 
+        1. v-model="selectedSort".  v-model:value = selectedSort - через $emit
+        2. :options="sortOption". байдим options - пропс массив, который ждет MySelect (по нему будет v-for). sortOption - массив, который определяем здесь
+       -->
+      <my-select v-model="selectedSort" :options="sortOption" />
+
+    </div>
+
     <my-dialog v-model:show="dialodVisible">
       <post-form @create="createPost" />
     </my-dialog>
-    <!-- #3 -->
-    <post-list
-      :posts="posts"
-      @remove="removePost"
-      v-if="!isPostsLoading"
-    />
+
+    <post-list :posts="posts" @remove="removePost" v-if="!isPostsLoading" />
     <div v-else>Идет загрузка...</div>
   </div>
 </template>
@@ -32,8 +34,13 @@ export default {
   data() {
     return {
       posts: [],
-      dialodVisible: false, // создали директиву
-      isPostsLoading: false // #2 модель для индикации загрузки
+      dialodVisible: false,
+      isPostsLoading: false,
+      selectedSort: '',
+      sortOption: [ // массив option для нашего select
+        { value: 'title', name: 'По названию' },
+        { value: 'body', name: 'По содержанию' },
+      ]
     }
   },
 
@@ -43,7 +50,7 @@ export default {
       this.dialodVisible = false;
     },
     removePost(post) {
-      this.posts = this.posts.filter(p => p.id !== post.id); // filter создает новый массив
+      this.posts = this.posts.filter(p => p.id !== post.id);
     },
     showDialog() {
       this.dialodVisible = true;
@@ -51,16 +58,16 @@ export default {
 
     async fetchPost() {
       try {
-        this.isPostsLoading = true; // перед отправкой запроса
-        setTimeout(async () => { // #1
-          const response = await axios.get('https://jsonplaceholder.typicode.com/posts?_limit=10');
-          this.posts = response.data;
-          this.isPostsLoading = false; // пока используем setTimeout (пока тестовый режим)
-        }, 2000);
+        this.isPostsLoading = true;
+        //setTimeout(async () => { // #1
+        const response = await axios.get('https://jsonplaceholder.typicode.com/posts?_limit=10');
+        this.posts = response.data;
+        //this.isPostsLoading = false; // пока используем setTimeout (пока тестовый режим)
+        //}, 2000);
       } catch (e) {
         alert('Ошибка');
       } finally {
-        //this.isPostsLoading = false; // При работе здесь (пока тестовый режим)
+        this.isPostsLoading = false; // При работе здесь (пока тестовый режим)
       }
     }
   },
@@ -80,5 +87,12 @@ export default {
 
 .app {
   padding: 20px;
+}
+
+.app_btns {
+  display: flex;
+  /* кнопка и список напротив друга  */
+  justify-content: space-between;
+  margin: 15px 0;
 }
 </style>
