@@ -1,8 +1,8 @@
 <template>
   <!-- ЗАМЕНИЛ select v-model="modelValue" @change="changeOption"-->
   <select :value="modelValue" @change="changeOption">
-    <option disabled value="">Выберите из спска</option>
-    <option v-for="option in options" :key="option.value" value="option.value">
+    <option disabled value="">Выберите из списка</option>
+    <option v-for="option in options" :key="option.value" :value="option.value">
       {{ option.name }}
     </option>
   </select>
@@ -17,7 +17,7 @@ export default {
     },
     options: {
       type: Array,
-      default: () => [] // для пустых массивов - стрелочная функция
+      default: () => []
     }
   },
   methods: {
@@ -25,7 +25,6 @@ export default {
       this.$emit('update:modelValue', event.target.value);
     }
   }
-
 }
 </script>
 

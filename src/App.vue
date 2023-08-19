@@ -74,6 +74,14 @@ export default {
 
   mounted() {
     this.fetchPost()
+  },
+
+  watch: {
+    selectedSort(newValue) { // с именем, как свойство
+      this.posts.sort((post1, post2) => {
+        return post1[this.selectedSort]?.localeCompare(post2[this.selectedSort])
+      })
+    },
   }
 }
 </script>
