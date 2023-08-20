@@ -79,7 +79,7 @@ export default {
   computed: {
     sortedPosts() {
       return [...this.posts].sort((post1, post2) => {
-        post1[this.selectedSort.value]?.localeCompare(post2[this.selectedSort.value])
+        post1[this.selectedSort]?.localeCompare(post2[this.selectedSort])
       })
     },
   }
