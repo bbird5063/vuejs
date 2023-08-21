@@ -27,6 +27,7 @@
         v-for="pageNumber in totalPages"
         :key="page"
         :class="{ 'current-page': page === pageNumber }"
+        @click="changePage(pageNumber)"
       >
         {{ pageNumber }}
       </div>
@@ -74,6 +75,11 @@ export default {
       this.dialodVisible = true
     },
 
+    changePage(pageNumber) {
+      this.page = pageNumber
+      //this.fetchPost() // заменим на watch: {page(){...}}
+    },
+
     async fetchPost() {
       try {
         this.isPostsLoading = true
@@ -109,7 +115,6 @@ export default {
 
   computed: {
     sortedPosts() {
-      console.l
       return [...this.posts].sort((post1, post2) => {
         return post1[this.selectedSort]?.localeCompare(post2[this.selectedSort])
       })
@@ -119,6 +124,12 @@ export default {
       return this.sortedPosts.filter((post) =>
         post.title.includes(this.searchQuery)
       )
+    },
+  },
+
+  watch: {
+    page() {
+      this.fetchPost()
     },
   },
 }

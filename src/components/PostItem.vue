@@ -1,6 +1,7 @@
 <template>
   <div class="post">
     <div>
+      <div>{{ post.id }}</div>
       <!-- post получили сверху через пропс от родителя PostList -->
       <div><strong>Название: </strong>{{ post.title }}</div>
       <div><strong>Описание: </strong>{{ post.body }}</div>
@@ -15,11 +16,12 @@
 <script>
 export default {
   props: {
-    post: { // пропс post пришел от родителя PostList
+    post: {
+      // пропс post пришел от родителя PostList
       type: Object,
       required: true,
-    }
-  }
+    },
+  },
 }
 </script>
 
