@@ -21,13 +21,23 @@
       v-if="!isPostsLoading"
     />
     <div v-else>Идет загрузка...</div>
+    <div class="page__wrapper">
+      <div
+        class="page"
+        v-for="pageNumber in totalPages"
+        :key="page"
+        :class="{ 'current-page': page === pageNumber }"
+      >
+        {{ pageNumber }}
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import PostForm from "@/components/PostForm";
-import PostList from "@/components/PostList";
-import axios from "axios";
+import PostForm from '@/components/PostForm'
+import PostList from '@/components/PostList'
+import axios from 'axios'
 
 export default {
   components: {
@@ -39,67 +49,79 @@ export default {
       posts: [],
       dialodVisible: false,
       isPostsLoading: false,
-      selectedSort: "",
-      searchQuery: "",
+      selectedSort: '',
+      searchQuery: '',
+      page: 1,
+      limit: 10,
+      totalPages: 1,
       sortOption: [
         // массив option для нашего select
-        { value: "title", name: "По названию" },
-        { value: "body", name: "По содержанию" },
+        { value: 'title', name: 'По названию' },
+        { value: 'body', name: 'По содержанию' },
       ],
-    };
+    }
   },
 
   methods: {
     createPost(post) {
-      this.posts.push(post);
-      this.dialodVisible = false;
+      this.posts.push(post)
+      this.dialodVisible = false
     },
     removePost(post) {
-      this.posts = this.posts.filter((p) => p.id !== post.id);
+      this.posts = this.posts.filter((p) => p.id !== post.id)
     },
     showDialog() {
-      this.dialodVisible = true;
+      this.dialodVisible = true
     },
 
     async fetchPost() {
       try {
-        this.isPostsLoading = true;
+        this.isPostsLoading = true
         //setTimeout(async () => { // #1
         const response = await axios.get(
-          "https://jsonplaceholder.typicode.com/posts?_limit=10"
-        );
-        this.posts = response.data;
+          'https://jsonplaceholder.typicode.com/posts',
+          {
+            params: {
+              _page: this.page,
+              _limit: this.limit,
+            },
+          }
+        )
+
+        this.totalPages = Math.ceil(
+          response.headers['x-total-count'] / this.limit
+        )
+        this.posts = response.data
+
         //this.isPostsLoading = false; // пока используем setTimeout (пока тестовый режим)
         //}, 2000);
       } catch (e) {
-        alert("Ошибка");
+        alert('Ошибка!')
       } finally {
-        this.isPostsLoading = false; // При работе здесь (пока тестовый режим)
+        this.isPostsLoading = false // При работе - здесь (пока тестовый режим)
       }
     },
   },
 
   mounted() {
-    this.fetchPost();
+    this.fetchPost()
   },
 
   computed: {
     sortedPosts() {
-      console.l;
+      console.l
       return [...this.posts].sort((post1, post2) => {
-        return post1[this.selectedSort]?.localeCompare(
-          post2[this.selectedSort]
-        );
-      });
+        return post1[this.selectedSort]?.localeCompare(post2[this.selectedSort])
+      })
     },
 
     sortedAndSearchedPosts() {
       return this.sortedPosts.filter((post) =>
         post.title.includes(this.searchQuery)
-      );
+      )
     },
   },
-};
+}
 </script>
 
 <style>
@@ -118,5 +140,16 @@ export default {
   /* кнопка и список напротив друга  */
   justify-content: space-between;
   margin: 15px 0;
+}
+.page__wrapper {
+  display: flex;
+  margin-top: 15px;
+}
+.page {
+  border: 1px solid black;
+  padding: 10px;
+}
+.current-page {
+  border: 2px solid teal;
 }
 </style>
