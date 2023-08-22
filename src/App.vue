@@ -21,7 +21,7 @@
       v-if="!isPostsLoading"
     />
     <div v-else>Идет загрузка...</div>
-    <div class="page__wrapper">
+    <!--div class="page__wrapper">
       <div
         class="page"
         v-for="pageNumber in totalPages"
@@ -31,7 +31,8 @@
       >
         {{ pageNumber }}
       </div>
-    </div>
+    </div-->
+    <div ref="observer" class="observer"></div>
   </div>
 </template>
 
@@ -75,15 +76,32 @@ export default {
       this.dialodVisible = true
     },
 
-    changePage(pageNumber) {
-      this.page = pageNumber
-      //this.fetchPost() // заменим на watch: {page(){...}}
+    async loadMorePosts() {
+      try {
+        this.page += 1
+        const response = await axios.get(
+          'https://jsonplaceholder.typicode.com/posts',
+          {
+            params: {
+              _page: this.page,
+              _limit: this.limit,
+            },
+          }
+        )
+
+        this.totalPages = Math.ceil(
+          response.headers['x-total-count'] / this.limit
+        )
+        //this.posts = response.data; // перезаписываем
+        this.posts = [...this.posts, ...response.data] // добавляем в конец массива
+      } catch (e) {
+        alert('Ошибка!')
+      }
     },
 
     async fetchPost() {
       try {
         this.isPostsLoading = true
-        //setTimeout(async () => { // #1
         const response = await axios.get(
           'https://jsonplaceholder.typicode.com/posts',
           {
@@ -98,19 +116,29 @@ export default {
           response.headers['x-total-count'] / this.limit
         )
         this.posts = response.data
-
-        //this.isPostsLoading = false; // пока используем setTimeout (пока тестовый режим)
-        //}, 2000);
       } catch (e) {
         alert('Ошибка!')
       } finally {
-        this.isPostsLoading = false // При работе - здесь (пока тестовый режим)
+        this.isPostsLoading = false
       }
     },
   },
 
   mounted() {
     this.fetchPost()
+    console.log(this.$refs.observer)
+    const options = {
+      rootMargin: '0px',
+      threshold: 1.0,
+    }
+    const callback = (entries, observer) => {
+      // только стрелочная. при function не будет доступна loadMorePosts()
+      if (entries[0].isIntersecting && this.page < this.totalPages) {
+        this.loadMorePosts()
+      }
+    }
+    const observer = new IntersectionObserver(callback, options)
+    observer.observe(this.$refs.observer) // передаем ссылку на нужный DOM-элемент
   },
 
   computed: {
@@ -124,12 +152,6 @@ export default {
       return this.sortedPosts.filter((post) =>
         post.title.includes(this.searchQuery)
       )
-    },
-  },
-
-  watch: {
-    page() {
-      this.fetchPost()
     },
   },
 }
@@ -148,7 +170,6 @@ export default {
 
 .app_btns {
   display: flex;
-  /* кнопка и список напротив друга  */
   justify-content: space-between;
   margin: 15px 0;
 }
@@ -162,5 +183,10 @@ export default {
 }
 .current-page {
   border: 2px solid teal;
+}
+/* при работе этот <div> невидимый */
+.observer {
+  height: 30px;
+  background: green;
 }
 </style>
