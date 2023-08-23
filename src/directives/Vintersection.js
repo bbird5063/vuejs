@@ -16,4 +16,6 @@ export default {
     const observer = new IntersectionObserver(callback, options);
     observer.observe(el); // меняем на el. Передаем ссылку на нужный DOM-элемент
   },
+
+  name: 'intersection',
 };

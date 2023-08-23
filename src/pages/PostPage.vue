@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>Страница с постами</h1>
-    <my-input v-model="searchQuery" placeholder="Поиск..." />
+    <my-input v-focus v-model="searchQuery" placeholder="Поиск..." />
     <div class="app_btns">
       <my-button @click="showDialog"> Создать пост </my-button>
       <my-select v-model="selectedSort" :options="sortOption" />
@@ -10,7 +10,7 @@
     <my-dialog v-model:show="dialodVisible">
       <post-form @create="createPost" />
     </my-dialog>
-
+    
     <post-list
       :posts="sortedAndSearchedPosts"
       @remove="removePost"
