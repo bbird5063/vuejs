@@ -2,7 +2,8 @@ import Main from '@/pages/Main.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import PostPage from '@/pages/PostPage.vue';
 import About from '@/pages/About.vue';
-import PostIdPage from '@/pages/PostIdPage.vue'; // добавил
+import PostIdPage from '@/pages/PostIdPage.vue';
+import PostPageWithStore from '@/pages/PostPageWithStore.vue'; // добавил
 
 const routes = [
   {
@@ -18,9 +19,13 @@ const routes = [
     component: About,
   },
   {
-    // добавил (:id - динамический параметр)
     path: '/posts/:id',
     component: PostIdPage,
+  },
+  {
+    // добавил
+    path: '/store',
+    component: PostPageWithStore,
   },
 ];
 

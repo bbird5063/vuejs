@@ -3,6 +3,7 @@ import App from './App';
 import components from '@/components/UI';
 import router from '@/router/router';
 import directives from '@/directives';
+import store from '@/store'; // добавили
 
 const app = createApp(App);
 
@@ -15,4 +16,4 @@ directives.forEach(directive => {
 });
 
 /** .use - здесь подключаютcя плагины, библиотеки, bootstrap, vuex, ... */
-app.use(router).mount('#app'); // use(router) добавили
+app.use(router).use(store).mount('#app'); // use(store) добавили
