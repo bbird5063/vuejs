@@ -1,19 +1,19 @@
 <template>
   <div>
-    <h1>{{ $store.getters.doubleLikes }}</h1>
-    <h1>
-      {{
-        $store.state.isAuth
-          ? 'Пользователь авторизован'
-          : 'Пользователь не авторизован'
-      }}
-    </h1>
-    <my-button @click="$store.commit('incrementLikes')"> Лайк </my-button>
-    <my-button @click="$store.commit('decrementLikes')"> Дизлайк </my-button>
-    <my-input v-focus v-model="searchQuery" placeholder="Поиск..." />
+    <h1>Страница с постами</h1>
+    <my-input
+      :model-value="searchQuery"
+      @update:model-value="setSearchQuery"
+      placeholder="Поиск...."
+      v-focus
+    />
     <div class="app_btns">
       <my-button @click="showDialog"> Создать пост </my-button>
-      <my-select v-model="selectedSort" :options="sortOption" />
+      <my-select
+        :model-value="selectedSort"
+        @update:model-value="setSelectedSort"
+        :options="sortOptions"
+      />
     </div>
 
     <my-dialog v-model:show="dialodVisible">
@@ -26,10 +26,7 @@
       v-if="!isPostsLoading"
     />
     <div v-else>Идет загрузка...</div>
-    <!-- ref="observer" заменяем на v-intersection -->
-    <!--<div ref="observer" class="observer"></div>-->
-    <!-- <div v-intersection class="observer"></div> -->
-    <!-- <div v-intersection="{ name: 'Ulbi TV' }" class="observer"></div> -->
+
     <div v-intersection="loadMorePosts" class="observer"></div>
   </div>
 </template>
@@ -38,6 +35,7 @@
 import PostForm from '@/components/PostForm';
 import PostList from '@/components/PostList';
 import axios from 'axios';
+import { mapState, mapGetters, mapActions, mapMutations } from 'vuex';
 
 export default {
   components: {
@@ -46,23 +44,21 @@ export default {
   },
   data() {
     return {
-      posts: [],
       dialodVisible: false,
-      isPostsLoading: false,
-      selectedSort: '',
-      searchQuery: '',
-      page: 1,
-      limit: 10,
-      totalPages: 1,
-      sortOption: [
-        // массив option для нашего select
-        { value: 'title', name: 'По названию' },
-        { value: 'body', name: 'По содержанию' },
-      ],
     };
   },
 
   methods: {
+    ...mapMutations({
+      setPage: 'post/setPage',
+      setSearchQuery: 'post/setSearchQuery',
+      setSelectedSort: 'post/setSelectedSort',
+    }),
+    ...mapActions({
+      loadMorePosts: 'post/loadMorePosts',
+      fetchPosts: 'post/fetchPosts',
+    }),
+
     createPost(post) {
       this.posts.push(post);
       this.dialodVisible = false;
@@ -73,88 +69,28 @@ export default {
     showDialog() {
       this.dialodVisible = true;
     },
-
-    async loadMorePosts() {
-      try {
-        this.page += 1;
-        const response = await axios.get(
-          'https://jsonplaceholder.typicode.com/posts',
-          {
-            params: {
-              _page: this.page,
-              _limit: this.limit,
-            },
-          }
-        );
-
-        this.totalPages = Math.ceil(
-          response.headers['x-total-count'] / this.limit
-        );
-        //this.posts = response.data; // перезаписываем
-        this.posts = [...this.posts, ...response.data]; // добавляем в конец массива
-      } catch (e) {
-        alert('Ошибка!');
-      }
-    },
-
-    async fetchPost() {
-      try {
-        this.isPostsLoading = true;
-        const response = await axios.get(
-          'https://jsonplaceholder.typicode.com/posts',
-          {
-            params: {
-              _page: this.page,
-              _limit: this.limit,
-            },
-          }
-        );
-
-        this.totalPages = Math.ceil(
-          response.headers['x-total-count'] / this.limit
-        );
-        this.posts = response.data;
-      } catch (e) {
-        alert('Ошибка!');
-      } finally {
-        this.isPostsLoading = false;
-      }
-    },
   },
 
   mounted() {
-    this.fetchPost();
-    /*
-    console.log(this.$refs.observer);
-    const options = {
-      rootMargin: '0px',
-      threshold: 1.0,
-    };
-    const callback = (entries, observer) => {
-      // только стрелочная. при function не будет доступна loadMorePosts()
-      if (entries[0].isIntersecting && this.page < this.totalPages) {
-        this.loadMorePosts();
-      }
-    };
-    const observer = new IntersectionObserver(callback, options);
-    observer.observe(this.$refs.observer); // передаем ссылку на нужный DOM-элемент
-    */
+    this.fetchPosts();
   },
 
   computed: {
-    sortedPosts() {
-      return [...this.posts].sort((post1, post2) => {
-        return post1[this.selectedSort]?.localeCompare(
-          post2[this.selectedSort]
-        );
-      });
-    },
+    ...mapState({
+      posts: state => state.post.posts,
+      isPostsLoading: state => state.post.isPostsLoading,
+      selectedSort: state => state.post.selectedSort,
+      searchQuery: state => state.post.searchQuery,
+      page: state => state.post.page,
+      limit: state => state.post.limit,
+      totalPages: state => state.post.totalPages,
+      sortOptions: state => state.post.sortOptions,
+    }),
 
-    sortedAndSearchedPosts() {
-      return this.sortedPosts.filter(post =>
-        post.title.includes(this.searchQuery)
-      );
-    },
+    ...mapGetters({
+      sortedPosts: 'post/sortedPosts',
+      sortedAndSearchedPosts: 'post/sortedAndSearchedPosts',
+    }),
   },
 };
 </script>
