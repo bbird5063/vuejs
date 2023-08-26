@@ -53,6 +53,7 @@ export default {
       setPage: 'post/setPage',
       setSearchQuery: 'post/setSearchQuery',
       setSelectedSort: 'post/setSelectedSort',
+      setPosts: 'post/setPosts',
     }),
     ...mapActions({
       loadMorePosts: 'post/loadMorePosts',
@@ -64,8 +65,13 @@ export default {
       this.dialodVisible = false;
     },
     removePost(post) {
-      this.posts = this.posts.filter(p => p.id !== post.id);
+      this.$store.commit(
+        // commit только так
+        'post/setPosts', // просто setPosts не работает
+        this.posts.filter(p => p.id !== post.id) // this. - ???
+      );
     },
+
     showDialog() {
       this.dialodVisible = true;
     },
