@@ -1,14 +1,15 @@
 <template>
   <div>
-    <h1>Добро пожаловать на курс Vue 3</h1>
-    <!--Добавили-->
-    <!--router-link to="/posts">Пользователи</router-link>
-    <router-link to="/about">О сайте</router-link-->
+    <h1>Добро пожаловать на курс по Vue 3</h1>
   </div>
 </template>
 
 <script>
-export default {};
+export default {
+
+}
 </script>
 
-<style scoped></style>
+<style scoped>
+
+</style>

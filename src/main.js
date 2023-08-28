@@ -1,19 +1,21 @@
-import { createApp } from 'vue';
-import App from './App';
+import { createApp } from 'vue'
+import App from './App'
 import components from '@/components/UI';
-import router from '@/router/router';
+import router from "@/router/router";
 import directives from '@/directives';
-import store from '@/store'; // добавили
+import store from '@/store';
 
-const app = createApp(App);
+const app = createApp(App)
 
 components.forEach(component => {
-  app.component(component.name, component);
-});
+    app.component(component.name, component)
+})
 
 directives.forEach(directive => {
-  app.directive(directive.name, directive);
-});
+    app.directive(directive.name, directive)
+})
 
-/** .use - здесь подключаютcя плагины, библиотеки, bootstrap, vuex, ... */
-app.use(router).use(store).mount('#app'); // use(store) добавили
+app
+    .use(router)
+    .use(store)
+    .mount('#app');

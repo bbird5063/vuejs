@@ -7,80 +7,90 @@
       placeholder="Поиск...."
       v-focus
     />
-    <div class="app_btns">
-      <my-button @click="showDialog"> Создать пост </my-button>
+    <div class="app__btns">
+      <my-button @click="showDialog"> Создать пользователя </my-button>
       <my-select
         :model-value="selectedSort"
         @update:model-value="setSelectedSort"
         :options="sortOptions"
       />
     </div>
-
-    <my-dialog v-model:show="dialodVisible">
+    <my-dialog v-model:show="dialogVisible">
       <post-form @create="createPost" />
     </my-dialog>
-
     <post-list
       :posts="sortedAndSearchedPosts"
       @remove="removePost"
       v-if="!isPostsLoading"
     />
     <div v-else>Идет загрузка...</div>
-
     <div v-intersection="loadMorePosts" class="observer"></div>
+    <div class="page__wrapper">
+      <div
+        v-for="pageNumber in totalPages"
+        :key="pageNumber"
+        class="page"
+        :class="{
+          'current-page': page === pageNumber,
+        }"
+        @click="changePage(pageNumber)"
+      >
+        {{ pageNumber }}
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import PostForm from '@/components/PostForm';
 import PostList from '@/components/PostList';
+import MyButton from '@/components/UI/MyButton';
 import axios from 'axios';
+import MySelect from '@/components/UI/MySelect';
+import MyInput from '@/components/UI/MyInput';
 import { mapState, mapGetters, mapActions, mapMutations } from 'vuex';
 
 export default {
   components: {
-    PostForm,
+    MyInput,
+    MySelect,
+    MyButton,
     PostList,
+    PostForm,
   },
   data() {
     return {
-      dialodVisible: false,
+      dialogVisible: false,
     };
   },
-
   methods: {
     ...mapMutations({
       setPage: 'post/setPage',
       setSearchQuery: 'post/setSearchQuery',
       setSelectedSort: 'post/setSelectedSort',
-      setPosts: 'post/setPosts',
     }),
     ...mapActions({
       loadMorePosts: 'post/loadMorePosts',
       fetchPosts: 'post/fetchPosts',
     }),
-
     createPost(post) {
       this.posts.push(post);
-      this.dialodVisible = false;
+      this.dialogVisible = false;
     },
     removePost(post) {
       this.$store.commit(
-        // commit только так
+        // commit работает только так
         'post/setPosts', // просто setPosts не работает
         this.posts.filter(p => p.id !== post.id) // this. - ???
       );
     },
-
     showDialog() {
-      this.dialodVisible = true;
+      this.dialogVisible = true;
     },
   },
-
   mounted() {
     this.fetchPosts();
   },
-
   computed: {
     ...mapState({
       posts: state => state.post.posts,
@@ -92,20 +102,24 @@ export default {
       totalPages: state => state.post.totalPages,
       sortOptions: state => state.post.sortOptions,
     }),
-
     ...mapGetters({
       sortedPosts: 'post/sortedPosts',
       sortedAndSearchedPosts: 'post/sortedAndSearchedPosts',
     }),
   },
+  watch: {
+    // page() {
+    //   this.fetchPosts()
+    // }
+  },
 };
 </script>
 
-<style scoped>
-.app_btns {
+<style>
+.app__btns {
+  margin: 15px 0;
   display: flex;
   justify-content: space-between;
-  margin: 15px 0;
 }
 .page__wrapper {
   display: flex;
@@ -118,7 +132,7 @@ export default {
 .current-page {
   border: 2px solid teal;
 }
-/* при работе этот <div> невидимый */
+
 .observer {
   height: 30px;
   background: green;

@@ -6,12 +6,13 @@
 </template>
 
 <script>
-import Navbar from '@/components/UI/Navbar';
+import Navbar from "@/components/Navbar";
+
 export default {
   components: {
-    Navbar,
-  },
-};
+    Navbar
+  }
+}
 </script>
 
 <style>
@@ -20,7 +21,6 @@ export default {
   padding: 0;
   box-sizing: border-box;
 }
-
 .app {
   padding: 20px;
 }
